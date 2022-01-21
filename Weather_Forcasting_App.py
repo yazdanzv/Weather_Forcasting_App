@@ -36,7 +36,7 @@ class Weather:
         # UI
         self.window = Tk()
         self.window.title("Weather App")
-        self.window.geometry("1500x750")
+        self.window.geometry("1500x780")
         self.window.config(highlightthickness=0, bg=NAVY_BLUE)
 
         # Frames
@@ -171,6 +171,12 @@ class Weather:
                                                          fill="white")
         self.date_text = self.canvas.create_text(200, 180, text=self.dt, font=MONOFONT_NK57, fill="white")
 
+        # Button Labels
+        self.more = Label(text="more...",font=("nk57-monospace", "8", "normal"),
+                      fg="white", bg=NAVY_BLUE, highlightthickness=0)
+        self.more.grid(column=10, row=4)
+        self.more.bind("<Button-1>", self.more_information)
+
         # Buttons
         self.refresh_button = Button(text="Refresh", bg=BLUE, fg="white", font=MONOFONT_NK57, command=self.update_thread)
         self.refresh_button.grid(column=0, row=3, columnspan=3)
@@ -260,6 +266,9 @@ class Weather:
             self.dt = self.dt[0:num] + datetime.datetime.now().strftime("%I:%M:%S")
             self.canvas.itemconfig(self.date_text, text=self.dt)
             self.window.update()
+
+    def more_information(self, event):
+        print("here")
 
 
 Weather()
