@@ -1,7 +1,6 @@
 from tkinter import *
 import requests
 import datetime
-import ScrollBar
 from tkinter import ttk
 
 # from PIL import ImageTk, Image
@@ -23,6 +22,7 @@ CAYN = "#7CD1B8"
 
 class Weather:
     def __init__(self):
+
         self.city = "Karaj"
         self.weather = {
             "lat": 35.807580,
@@ -58,7 +58,8 @@ class Weather:
         for i in range(48):
             a = Frame(highlightthickness=0, bg=NAVY_BLUE, name=f"frame_hourly_{i}")
             self.frames_hourly.append(a)
-
+        # Frame for Labels
+        self.label_button_frame = Frame(bg=NAVY_BLUE, highlightthickness=0)
         # Canvas
         # if the image format was jpg you have to set it like this with the commented package above
         # img = ImageTk.PhotoImage(Image.open("Pictures\\pic_no2.jpg"))
@@ -172,13 +173,35 @@ class Weather:
         self.date_text = self.canvas.create_text(200, 180, text=self.dt, font=MONOFONT_NK57, fill="white")
 
         # Button Labels
-        self.more = Label(text="more...",font=("nk57-monospace", "8", "normal"),
-                      fg="white", bg=NAVY_BLUE, highlightthickness=0)
+        self.more = Label(text="more...", font=("nk57-monospace", "8", "normal"),
+                          fg="white", bg=NAVY_BLUE, highlightthickness=0)
         self.more.grid(column=10, row=4)
         self.more.bind("<Button-1>", self.more_information)
+        self.home_page = Label(text="Home", font=("nk57-monospace", "8", "normal"),
+                               fg="white", bg=NAVY_BLUE, highlightthickness=0)
+        self.daily_page = self.canvas.create_text(210, 30, text="Daily", font=("nk57-monospace", "10", "normal"),
+                                                  fill="white")
+        self.home_page_canvas = self.canvas.create_text(70, 30, text="Home", font=("nk57-monospace", "10", "normal"),
+                                                        fill="white")
+        self.hourly_page = self.canvas.create_text(140, 30, text="Hourly", font=("nk57-monospace", "10", "normal"),
+                                                   fill="white")
+        self.canvas.tag_bind(self.daily_page, "<Button-1>", self.daily_clicked)
+        self.canvas.tag_bind(self.home_page_canvas, "<Button-1>", self.home_clicked)
+        self.canvas.tag_bind(self.hourly_page, "<Button-1>", self.more_information)
+
+        self.back_label = Label(self.label_button_frame, text="Back", font=("nk57-monospace", "15", "normal"),
+                                fg="white", bg=NAVY_BLUE, highlightthickness=0)
+        self.next_label = Label(self.label_button_frame, text="Next", font=("nk57-monospace", "15", "normal"),
+                                fg="white", bg=NAVY_BLUE, highlightthickness=0)
+        self.previous_label = Label(self.label_button_frame, text="Previous", font=("nk57-monospace", "15", "normal"),
+                                    fg="white", bg=NAVY_BLUE, highlightthickness=0)
+        self.back_label.bind("<Button-1>", self.back_clicked)
+        self.next_label.bind("<Button-1>", self.next_clicked)
+        self.previous_label.bind("<Button-1>", self.previous_clicked)
 
         # Buttons
-        self.refresh_button = Button(text="Refresh", bg=BLUE, fg="white", font=MONOFONT_NK57, command=self.update_thread)
+        self.refresh_button = Button(text="Refresh", bg=BLUE, fg="white", font=MONOFONT_NK57,
+                                     command=self.update_thread)
         self.refresh_button.grid(column=0, row=3, columnspan=3)
 
         # Giving position to widgets
@@ -268,7 +291,39 @@ class Weather:
             self.window.update()
 
     def more_information(self, event):
-        print("here")
+        self.canvas.grid_forget()
+        self.frame_today_info.grid_forget()
+        for i in range(12):
+            self.frames_hourly[i].grid_forget()
+        self.refresh_button.grid_forget()
+        self.more.grid_forget()
+
+        for i in range(8):
+            self.frames_hourly[i].grid(column=1 + i, row=0, padx=5, pady=5)
+        for i in range(8, 16):
+            self.frames_hourly[i].grid(column=1 + i - 8, row=1, padx=5, pady=5)
+        for i in range(16, 24):
+            self.frames_hourly[i].grid(column=1 + i - 16, row=2, padx=5, pady=5)
+        for i in range(24, 32):
+            self.frames_hourly[i].grid(column=1 + i - 24, row=3, padx=5, pady=5)
+        self.back_label.grid(column=0, row=0, pady=10)
+        self.next_label.grid(column=0, row=1, pady=10)
+        self.label_button_frame.grid(column=0, row=3, padx=100)
+
+    def home_clicked(self, event):
+        print("home")
+
+    def daily_clicked(self, event):
+        print("daily")
+
+    def next_clicked(self, event):
+        print("next")
+
+    def back_clicked(self, event):
+        print("back")
+
+    def previous_clicked(self, event):
+        print("previous")
 
 
 Weather()
