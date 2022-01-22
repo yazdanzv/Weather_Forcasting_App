@@ -41,14 +41,10 @@ class Weather:
 
         # Frames
         # Daily Forecast
-        # self.frame_today = Frame()
-        # self.frame_1 = Frame()
-        # self.frame_2 = Frame()
-        # self.frame_3 = Frame()
-        # self.frame_4 = Frame()
-        # self.frame_5 = Frame()
-        # self.frame_6 = Frame()
-        # self.frame_7 = Frame()
+        self.frames_daily = []
+        for i in range(8):
+            a = Frame(highlightthickness=0, bg=NAVY_BLUE, name=f"frame_daily_{i}")
+            self.frames_daily.append(a)
         # Main Page
         self.frame_today_info = Frame()
         self.frame_today_info.config(highlightthickness=0, bg=NAVY_BLUE)
@@ -189,15 +185,18 @@ class Weather:
         self.canvas.tag_bind(self.home_page_canvas, "<Button-1>", self.update_thread)
         self.canvas.tag_bind(self.hourly_page, "<Button-1>", self.more_information)
 
-        self.back_label = Label(self.label_button_frame, text="Home", font=("nk57-monospace", "15", "normal"),
+        self.home_label = Label(self.label_button_frame, text="Home", font=("nk57-monospace", "15", "normal"),
                                 fg="white", bg=NAVY_BLUE, highlightthickness=0)
         self.next_label = Label(self.label_button_frame, text="Next", font=("nk57-monospace", "15", "normal"),
                                 fg="white", bg=NAVY_BLUE, highlightthickness=0)
         self.previous_label = Label(self.label_button_frame, text="Previous", font=("nk57-monospace", "15", "normal"),
                                     fg="white", bg=NAVY_BLUE, highlightthickness=0)
-        self.back_label.bind("<Button-1>", self.back_clicked)
+        self.back_label = Label(text="Back", font=("nk57-monospace", "15", "normal"),
+                                    fg="white", bg=NAVY_BLUE, highlightthickness=0)
+        self.home_label.bind("<Button-1>", self.home_clicked)
         self.next_label.bind("<Button-1>", self.next_clicked)
         self.previous_label.bind("<Button-1>", self.previous_clicked)
+        self.back_label.bind("<Button-1>", self.back_clicked)
 
         # Buttons
         self.refresh_button = Button(text="Refresh", bg=BLUE, fg="white", font=MONOFONT_NK57,
@@ -206,9 +205,11 @@ class Weather:
 
         # Labels
         self.today_label = Label(text="Today", font=("nk57-monospace", "20", "bold"),
-                                fg="white", bg=NAVY_BLUE, highlightthickness=0)
-        self.tomorrow_label = Label(text="Tomorrow", font=("nk57-monospace", "20", "bold"),
                                  fg="white", bg=NAVY_BLUE, highlightthickness=0)
+        self.tomorrow_label = Label(text="Tomorrow", font=("nk57-monospace", "20", "bold"),
+                                    fg="white", bg=NAVY_BLUE, highlightthickness=0)
+        self.daily_text = Label(text="Daily", font=("nk57-monospace", "35", "bold"),
+                                    fg="white", bg=NAVY_BLUE, highlightthickness=0)
 
         # Giving position to widgets
         for i in range(48):
@@ -224,7 +225,108 @@ class Weather:
         for i in range(6, 12):
             self.frames_hourly[i].grid(column=4 + i - 6, row=2, sticky="w", padx=3, pady=4)
 
-        # self.update_thread()
+        # Setting the Daily frames
+        self.dt_daily = []
+        for i in range(8):
+            a = Label(self.frames_daily[i],
+                      text=datetime.datetime.fromtimestamp(self.datas['daily'][i]['dt']).strftime("%A"),
+                      font=("nk57-monospace", "13", "bold"),
+                      fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"dt_daily_{i}")
+            self.dt_daily.append(a)
+        self.dt_daily[0]["text"] = "Today"
+        self.sunrise_daily = []
+        for i in range(8):
+            a = Label(self.frames_daily[i], text="sunrise : " + str(
+                datetime.datetime.fromtimestamp(self.datas['daily'][i]['sunrise']).strftime("%I:%M:%S")),
+                      font=("nk57-monospace", "11", "normal"),
+                      fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"sunrise_daily_{i}")
+            self.sunrise_daily.append(a)
+        self.sunset_daily = []
+        for i in range(8):
+            a = Label(self.frames_daily[i], text="sunset : " + str(
+                datetime.datetime.fromtimestamp(self.datas['daily'][i]['sunset']).strftime("%I:%M:%S")),
+                      font=("nk57-monospace", "11", "normal"),
+                      fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"sunset_daily_{i}")
+            self.sunset_daily.append(a)
+        self.moonrise_daily = []
+        for i in range(8):
+            a = Label(self.frames_daily[i], text="moonrise : " + str(
+                datetime.datetime.fromtimestamp(self.datas['daily'][i]['moonrise']).strftime("%I:%M:%S")),
+                      font=("nk57-monospace", "11", "normal"),
+                      fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"moonrise_daily_{i}")
+            self.moonrise_daily.append(a)
+        self.moonset_daily = []
+        for i in range(8):
+            a = Label(self.frames_daily[i], text="moonset : " + str(
+                datetime.datetime.fromtimestamp(self.datas['daily'][i]['moonset']).strftime("%I:%M:%S")),
+                      font=("nk57-monospace", "11", "normal"),
+                      fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"moonset_daily_{i}")
+            self.moonset_daily.append(a)
+        self.temp_daily = []
+        for i in range(8):
+            a = Label(self.frames_daily[i], text="min : " + str(self.datas['daily'][i]['temp']['min'] - 273)[0:5] +
+                                                 "/ max : " + str(self.datas['daily'][i]['temp']['max'] - 273)[0:5],
+                      font=("nk57-monospace", "11", "normal"),
+                      fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"temp_daily_{i}")
+            self.temp_daily.append(a)
+        self.main_daily = []
+        for i in range(8):
+            a = Label(self.frames_daily[i], text=self.datas['daily'][i]['weather'][0]['main'], font=("nk57-monospace", "11", "normal"),
+                      fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"main_daily_{i}")
+            self.main_daily.append(a)
+        self.description_daily = []
+        for i in range(8):
+            a = Label(self.frames_daily[i], text=self.datas['daily'][i]['weather'][0]['description'], font=("nk57-monospace", "11", "normal"),
+                      fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"description_daily_{i}")
+            self.description_daily.append(a)
+        self.icon_images_daily = []
+        for i in range(8):
+            a = PhotoImage(file=f"Icons\\{self.datas['daily'][i]['weather'][0]['icon']}@2x.png", name=f"icon_daily_{i}")
+            self.icon_images_daily.append(a)
+        self.canvases_daily = []
+        for i in range(8):
+            a = Canvas(self.frames_daily[i], width=100, height=100, name=f"daily_canvas_{i}")
+            a.create_image(50, 50, image=self.icon_images_daily[i])
+            a.config(bg=NAVY_BLUE, highlightthickness=0)
+            self.canvases_daily.append(a)
+        self.clouds_daily = []
+        for i in range(8):
+            a = Label(self.frames_daily[i], text="Clouds : " + str(self.datas['daily'][i]['clouds']) + " %", font=("nk57-monospace", "11", "normal"),
+                      fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"clouds_daily_{i}")
+            self.clouds_daily.append(a)
+        self.uvi_daily = []
+        for i in range(8):
+            a = Label(self.frames_daily[i], text="UVI : " + str(self.datas['daily'][i]['uvi']) + " index", font=("nk57-monospace", "11", "normal"),
+                      fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"uvi_daily_{i}")
+            self.uvi_daily.append(a)
+        self.humidity_daily = []
+        for i in range(8):
+            a = Label(self.frames_daily[i], text="humidity : " + str(self.datas['daily'][i]['humidity']) + " %",
+                      font=("nk57-monospace", "11", "normal"),
+                      fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"humidity_daily_{i}")
+            self.humidity_daily.append(a)
+        self.wind_speed_daily = []
+        for i in range(8):
+            a = Label(self.frames_daily[i], text="wind speed : " + str(self.datas['daily'][i]['wind_speed']) + " m/s",
+                      font=("nk57-monospace", "11", "normal"),
+                      fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"wind_speed_daily_{i}")
+            self.wind_speed_daily.append(a)
+        # Giving position to daily widgets
+        for i in range(8):
+            self.canvases_daily[i].grid(column=0, row=0)
+            self.dt_daily[i].grid(column=0, row=1, sticky="w")
+            self.main_daily[i].grid(column=0, row=2, sticky="w")
+            self.description_daily[i].grid(column=0, row=3, sticky="w")
+            self.temp_daily[i].grid(column=0, row=4, sticky="w")
+            self.sunrise_daily[i].grid(column=0, row=5, sticky="w")
+            self.sunset_daily[i].grid(column=0, row=6, sticky="w")
+            self.moonrise_daily[i].grid(column=0, row=7, sticky="w")
+            self.moonset_daily[i].grid(column=0, row=8, sticky="w")
+            self.clouds_daily[i].grid(column=0, row=9, sticky="w")
+            self.uvi_daily[i].grid(column=0, row=10, sticky="w")
+            self.humidity_daily[i].grid(column=0, row=11, sticky="w")
+            self.wind_speed_daily[i].grid(column=0, row=12, sticky="w")
+
         self.clock_thread()
 
         self.window.mainloop()
@@ -314,12 +416,41 @@ class Weather:
         for i in range(18, 24):
             self.frames_hourly[i].grid(column=1 + i - 18, row=3, padx=25, pady=5)
         self.today_label.grid(column=0, row=0, pady=25)
-        self.back_label.grid(column=0, row=0, pady=10, sticky="w")
+        self.home_label.grid(column=0, row=0, pady=10, sticky="w")
         self.next_label.grid(column=0, row=1, pady=10, sticky="w")
         self.label_button_frame.grid(column=0, row=3, padx=100)
 
     def daily_clicked(self, event):
-        print("daily")
+        # Forgetting
+        self.canvas.grid_forget()
+        self.frame_today_info.grid_forget()
+        for i in range(12):
+            self.frames_hourly[i].grid_forget()
+        self.refresh_button.grid_forget()
+        self.more.grid_forget()
+        # Setting
+        # Giving position to frames
+        for i in range(8):
+            self.frames_daily[i].grid(column=i, row=1, padx=10, pady=100)
+        self.daily_text.grid(column=3, row=0, padx=20, pady=15, columnspan=2)
+        self.back_label.grid(column=0, row=2, padx=20, pady=60)
+
+    def back_clicked(self, event):
+        # Forgetting
+        for i in range(8):
+            self.frames_daily[i].grid_forget()
+        self.daily_text.grid_forget()
+        self.back_label.grid_forget()
+        # Setting
+        # frames
+        for i in range(6):
+            self.frames_hourly[i].grid(column=4 + i, row=1, sticky="w", padx=3, pady=4)
+        for i in range(6, 12):
+            self.frames_hourly[i].grid(column=4 + i - 6, row=2, sticky="w", padx=3, pady=4)
+        # Other widgets
+        self.refresh_button.grid(column=0, row=3, columnspan=3)
+        self.more.grid(column=10, row=4)
+        self.canvas.grid(column=0, row=0, columnspan=12)
 
     def next_clicked(self, event):
         # Forgetting
@@ -339,7 +470,7 @@ class Weather:
         self.previous_label.grid(column=0, row=1, pady=10, sticky="w")
         self.tomorrow_label.grid(column=0, row=0, pady=25)
 
-    def back_clicked(self, event):
+    def home_clicked(self, event):
         # Forgetting
         try:
             self.today_label.grid_forget()
@@ -364,7 +495,7 @@ class Weather:
         self.refresh_button.grid(column=0, row=3, columnspan=3)
         self.more.grid(column=10, row=4)
         self.canvas.grid(column=0, row=0, columnspan=12)
-
+        self.frame_today_info.grid(column=0, row=1, sticky="w", padx=40, pady=20, columnspan=3, rowspan=2)
 
     def previous_clicked(self, event):
         # Forgetting
@@ -383,9 +514,6 @@ class Weather:
             self.frames_hourly[i].grid(column=1 + i - 18, row=3, padx=25, pady=5)
         self.today_label.grid(column=0, row=0, pady=25)
         self.next_label.grid(column=0, row=1, pady=10, sticky="w")
-        self.frame_today_info.grid(column=0, row=1, sticky="w", padx=40, pady=20, columnspan=3, rowspan=2)
-
-
 
 
 Weather()
