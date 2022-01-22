@@ -186,10 +186,10 @@ class Weather:
         self.hourly_page = self.canvas.create_text(140, 30, text="Hourly", font=("nk57-monospace", "10", "normal"),
                                                    fill="white")
         self.canvas.tag_bind(self.daily_page, "<Button-1>", self.daily_clicked)
-        self.canvas.tag_bind(self.home_page_canvas, "<Button-1>", self.home_clicked)
+        self.canvas.tag_bind(self.home_page_canvas, "<Button-1>", self.update_thread)
         self.canvas.tag_bind(self.hourly_page, "<Button-1>", self.more_information)
 
-        self.back_label = Label(self.label_button_frame, text="Back", font=("nk57-monospace", "15", "normal"),
+        self.back_label = Label(self.label_button_frame, text="Home", font=("nk57-monospace", "15", "normal"),
                                 fg="white", bg=NAVY_BLUE, highlightthickness=0)
         self.next_label = Label(self.label_button_frame, text="Next", font=("nk57-monospace", "15", "normal"),
                                 fg="white", bg=NAVY_BLUE, highlightthickness=0)
@@ -203,6 +203,12 @@ class Weather:
         self.refresh_button = Button(text="Refresh", bg=BLUE, fg="white", font=MONOFONT_NK57,
                                      command=self.update_thread)
         self.refresh_button.grid(column=0, row=3, columnspan=3)
+
+        # Labels
+        self.today_label = Label(text="Today", font=("nk57-monospace", "20", "bold"),
+                                fg="white", bg=NAVY_BLUE, highlightthickness=0)
+        self.tomorrow_label = Label(text="Tomorrow", font=("nk57-monospace", "20", "bold"),
+                                 fg="white", bg=NAVY_BLUE, highlightthickness=0)
 
         # Giving position to widgets
         for i in range(48):
@@ -291,39 +297,95 @@ class Weather:
             self.window.update()
 
     def more_information(self, event):
+        # Forgetting
         self.canvas.grid_forget()
         self.frame_today_info.grid_forget()
         for i in range(12):
             self.frames_hourly[i].grid_forget()
         self.refresh_button.grid_forget()
         self.more.grid_forget()
-
-        for i in range(8):
-            self.frames_hourly[i].grid(column=1 + i, row=0, padx=5, pady=5)
-        for i in range(8, 16):
-            self.frames_hourly[i].grid(column=1 + i - 8, row=1, padx=5, pady=5)
-        for i in range(16, 24):
-            self.frames_hourly[i].grid(column=1 + i - 16, row=2, padx=5, pady=5)
-        for i in range(24, 32):
-            self.frames_hourly[i].grid(column=1 + i - 24, row=3, padx=5, pady=5)
-        self.back_label.grid(column=0, row=0, pady=10)
-        self.next_label.grid(column=0, row=1, pady=10)
+        # Setting
+        for i in range(6):
+            self.frames_hourly[i].grid(column=1 + i, row=0, padx=25, pady=5)
+        for i in range(6, 12):
+            self.frames_hourly[i].grid(column=1 + i - 6, row=1, padx=25, pady=5)
+        for i in range(12, 18):
+            self.frames_hourly[i].grid(column=1 + i - 12, row=2, padx=25, pady=5)
+        for i in range(18, 24):
+            self.frames_hourly[i].grid(column=1 + i - 18, row=3, padx=25, pady=5)
+        self.today_label.grid(column=0, row=0, pady=25)
+        self.back_label.grid(column=0, row=0, pady=10, sticky="w")
+        self.next_label.grid(column=0, row=1, pady=10, sticky="w")
         self.label_button_frame.grid(column=0, row=3, padx=100)
-
-    def home_clicked(self, event):
-        print("home")
 
     def daily_clicked(self, event):
         print("daily")
 
     def next_clicked(self, event):
-        print("next")
+        # Forgetting
+        for i in range(24):
+            self.frames_hourly[i].grid_forget()
+        self.today_label.grid_forget()
+        self.next_label.grid_forget()
+        # Setting
+        for i in range(24, 30):
+            self.frames_hourly[i].grid(column=1 + i - 24, row=0, padx=25, pady=5)
+        for i in range(30, 36):
+            self.frames_hourly[i].grid(column=1 + i - 30, row=1, padx=25, pady=5)
+        for i in range(36, 42):
+            self.frames_hourly[i].grid(column=1 + i - 36, row=2, padx=25, pady=5)
+        for i in range(42, 48):
+            self.frames_hourly[i].grid(column=1 + i - 42, row=3, padx=25, pady=5)
+        self.previous_label.grid(column=0, row=1, pady=10, sticky="w")
+        self.tomorrow_label.grid(column=0, row=0, pady=25)
 
     def back_clicked(self, event):
-        print("back")
+        # Forgetting
+        try:
+            self.today_label.grid_forget()
+            for i in range(24):
+                self.frames_hourly[i].grid_forget()
+        except:
+            pass
+        try:
+            self.tomorrow_label.grid_forget()
+            for i in range(24, 48):
+                self.frames_hourly[i].grid_forget()
+        except:
+            pass
+        self.label_button_frame.grid_forget()
+        # Setting
+        # frames
+        for i in range(6):
+            self.frames_hourly[i].grid(column=4 + i, row=1, sticky="w", padx=3, pady=4)
+        for i in range(6, 12):
+            self.frames_hourly[i].grid(column=4 + i - 6, row=2, sticky="w", padx=3, pady=4)
+        # Other widgets
+        self.refresh_button.grid(column=0, row=3, columnspan=3)
+        self.more.grid(column=10, row=4)
+        self.canvas.grid(column=0, row=0, columnspan=12)
+
 
     def previous_clicked(self, event):
-        print("previous")
+        # Forgetting
+        for i in range(24, 48):
+            self.frames_hourly[i].grid_forget()
+        self.tomorrow_label.grid_forget()
+        self.previous_label.grid_forget()
+        # Setting
+        for i in range(6):
+            self.frames_hourly[i].grid(column=1 + i, row=0, padx=25, pady=5)
+        for i in range(6, 12):
+            self.frames_hourly[i].grid(column=1 + i - 6, row=1, padx=25, pady=5)
+        for i in range(12, 18):
+            self.frames_hourly[i].grid(column=1 + i - 12, row=2, padx=25, pady=5)
+        for i in range(18, 24):
+            self.frames_hourly[i].grid(column=1 + i - 18, row=3, padx=25, pady=5)
+        self.today_label.grid(column=0, row=0, pady=25)
+        self.next_label.grid(column=0, row=1, pady=10, sticky="w")
+        self.frame_today_info.grid(column=0, row=1, sticky="w", padx=40, pady=20, columnspan=3, rowspan=2)
+
+
 
 
 Weather()
