@@ -175,9 +175,9 @@ class Weather:
         self.more.bind("<Button-1>", self.more_information)
         self.home_page = Label(text="Home", font=("nk57-monospace", "8", "normal"),
                                fg="white", bg=NAVY_BLUE, highlightthickness=0)
-        self.daily_page = self.canvas.create_text(210, 30, text="Daily", font=("nk57-monospace", "10", "normal"),
+        self.daily_page = self.canvas.create_text(70, 30, text="Daily", font=("nk57-monospace", "10", "normal"),
                                                   fill="white")
-        self.home_page_canvas = self.canvas.create_text(70, 30, text="Home", font=("nk57-monospace", "10", "normal"),
+        self.home_page_canvas = self.canvas.create_text(210, 30, text="Refresh", font=("nk57-monospace", "10", "normal"),
                                                         fill="white")
         self.hourly_page = self.canvas.create_text(140, 30, text="Hourly", font=("nk57-monospace", "10", "normal"),
                                                    fill="white")
@@ -197,11 +197,6 @@ class Weather:
         self.next_label.bind("<Button-1>", self.next_clicked)
         self.previous_label.bind("<Button-1>", self.previous_clicked)
         self.back_label.bind("<Button-1>", self.back_clicked)
-
-        # Buttons
-        self.refresh_button = Button(text="Refresh", bg=BLUE, fg="white", font=MONOFONT_NK57,
-                                     command=self.update_thread)
-        self.refresh_button.grid(column=0, row=3, columnspan=3)
 
         # Labels
         self.today_label = Label(text="Today", font=("nk57-monospace", "20", "bold"),
@@ -331,7 +326,7 @@ class Weather:
 
         self.window.mainloop()
 
-    def update_thread(self):
+    def update_thread(self, event):
         import threading
         t = threading.Thread(target=self.update)
         t.setDaemon(True)
@@ -404,7 +399,6 @@ class Weather:
         self.frame_today_info.grid_forget()
         for i in range(12):
             self.frames_hourly[i].grid_forget()
-        self.refresh_button.grid_forget()
         self.more.grid_forget()
         # Setting
         for i in range(6):
@@ -426,7 +420,6 @@ class Weather:
         self.frame_today_info.grid_forget()
         for i in range(12):
             self.frames_hourly[i].grid_forget()
-        self.refresh_button.grid_forget()
         self.more.grid_forget()
         # Setting
         # Giving position to frames
@@ -448,9 +441,9 @@ class Weather:
         for i in range(6, 12):
             self.frames_hourly[i].grid(column=4 + i - 6, row=2, sticky="w", padx=3, pady=4)
         # Other widgets
-        self.refresh_button.grid(column=0, row=3, columnspan=3)
         self.more.grid(column=10, row=4)
         self.canvas.grid(column=0, row=0, columnspan=12)
+        self.frame_today_info.grid(column=0, row=1, sticky="w", padx=40, pady=20, columnspan=3, rowspan=2)
 
     def next_clicked(self, event):
         # Forgetting
@@ -492,7 +485,6 @@ class Weather:
         for i in range(6, 12):
             self.frames_hourly[i].grid(column=4 + i - 6, row=2, sticky="w", padx=3, pady=4)
         # Other widgets
-        self.refresh_button.grid(column=0, row=3, columnspan=3)
         self.more.grid(column=10, row=4)
         self.canvas.grid(column=0, row=0, columnspan=12)
         self.frame_today_info.grid(column=0, row=1, sticky="w", padx=40, pady=20, columnspan=3, rowspan=2)
