@@ -1,3 +1,4 @@
+import tkinter
 from tkinter import *
 import requests
 import datetime
@@ -26,6 +27,7 @@ class Weather:
     def __init__(self):
 
         self.city = "Karaj"
+        self.city_temp = ""
         self.weather = {
             "lat": 35.807580,
             "lon": 50.987420,
@@ -163,12 +165,12 @@ class Weather:
                       fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"label_desvription_{i}")
             self.hourly_label_description.append(a)
 
-        self.city_text = self.canvas.create_text(85, 100, text="Karaj", font=MONOFONT, fill="white")
-        self.sun_rise_set_text = self.canvas.create_text(235, 220,
+        self.city_text = self.canvas.create_text(45, 100, text=self.city, font=MONOFONT, fill="white", anchor="nw")
+        self.sun_rise_set_text = self.canvas.create_text(45, 220,
                                                          text=f"sunrise : {sunrise} AM / sunset : {sunset} PM",
                                                          font=MONOFONT_NK57,
-                                                         fill="white")
-        self.date_text = self.canvas.create_text(200, 180, text=self.dt, font=MONOFONT_NK57, fill="white")
+                                                         fill="white" , anchor="nw")
+        self.date_text = self.canvas.create_text(45, 180, text=self.dt, font=MONOFONT_NK57, fill="white", anchor="nw")
 
         # Button Labels
         self.more = Label(text="more...", font=("nk57-monospace", "8", "normal"),
@@ -220,6 +222,7 @@ class Weather:
         # Button_label
         self.search_img = PhotoImage(file="Icons\\search.png")
         self.search_lbl = Label(image=self.search_img, bg=NAVY_BLUE, highlightthickness=0)
+        self.search_lbl.bind("<Button-1>", self.search_city)
 
         self.canvas.create_window(1400, 50, window=self.searchbox)
         self.canvas.create_window(1327, 50, window=self.search_lbl)
@@ -353,7 +356,8 @@ class Weather:
         self.weather['lat'] = lat
         self.weather['lon'] = lon
         self.city = self.searchbox.get()
-        self.update_thread()
+        self.canvas.itemconfig(self.city_text, text=self.city)
+        self.update_thread(1)
         self.searchbox.delete(0, END)
         self.searchbox.insert(0, "Search")
         self.searchbox['state'] = "disable"
@@ -364,6 +368,7 @@ class Weather:
 
     def disable(self, event):
         if len(self.searchbox.get()) == 0:
+            self.city_temp = self.searchbox.get()
             self.searchbox.insert(0, "Search")
             self.searchbox['state'] = "disable"
 
@@ -424,10 +429,10 @@ class Weather:
         self.canvases_daily.clear()
         for i in range(8):
             self.dt_daily[i]['text'] = datetime.datetime.fromtimestamp(self.datas['daily'][i]['dt']).strftime("%A")
-            self.sunrise_daily[i]['text'] = datetime.datetime.fromtimestamp(self.datas['daily'][i]['sunrise']).strftime("%I:%M:%S")
-            self.sunset_daily[i]['text'] = datetime.datetime.fromtimestamp(self.datas['daily'][i]['sunset']).strftime("%I:%M:%S")
-            self.moonrise_daily[i]['text'] = datetime.datetime.fromtimestamp(self.datas['daily'][i]['moonrise']).strftime("%I:%M:%S")
-            self.moonset_daily[i]['text'] = datetime.datetime.fromtimestamp(self.datas['daily'][i]['moonset']).strftime("%I:%M:%S")
+            self.sunrise_daily[i]['text'] = "sunrise : " + str(datetime.datetime.fromtimestamp(self.datas['daily'][i]['sunrise']).strftime("%I:%M:%S"))
+            self.sunset_daily[i]['text'] = "sunset : " + str(datetime.datetime.fromtimestamp(self.datas['daily'][i]['sunset']).strftime("%I:%M:%S"))
+            self.moonrise_daily[i]['text'] = "moonrise : " + str(datetime.datetime.fromtimestamp(self.datas['daily'][i]['moonrise']).strftime("%I:%M:%S"))
+            self.moonset_daily[i]['text'] = "moonset : " + str(datetime.datetime.fromtimestamp(self.datas['daily'][i]['moonset']).strftime("%I:%M:%S"))
             self.temp_daily[i]['text'] = "min : " + str(self.datas['daily'][i]['temp']['min'] - 273)[0:5] + "/ max : " + str(self.datas['daily'][i]['temp']['max'] - 273)[0:5]
             self.main_daily[i]['text'] = self.datas['daily'][i]['weather'][0]['main']
             self.description_daily[i]['text'] = self.datas['daily'][i]['weather'][0]['description']
@@ -435,7 +440,7 @@ class Weather:
             self.uvi_daily[i]['text'] = "UVI : " + str(self.datas['daily'][i]['uvi']) + " index"
             self.humidity_daily[i]['text'] = "humidity : " + str(self.datas['daily'][i]['humidity']) + " %"
             self.wind_speed_daily[i]['text'] = "wind speed : " + str(self.datas['daily'][i]['wind_speed']) + " m/s"
-            self.images.append(PhotoImage(file=f"Icons\\{self.datas['daily'][i]['weather'][0]['icon']}@2x.png", name=f"icon_daily_{i}"))
+            self.icon_images_daily.append(PhotoImage(file=f"Icons\\{self.datas['daily'][i]['weather'][0]['icon']}@2x.png", name=f"icon_daily_{i}"))
         self.dt_daily[0]['text'] = "Today"
         for i in range(8):
             a = Canvas(self.frames_daily[i], width=100, height=100, name=f"daily_canvas_{i}")
@@ -445,8 +450,6 @@ class Weather:
         for i in range(8):
             self.canvases_daily[i].grid(column=0, row=0)
 
-        if len(self.searchbox.get()) != 0:
-            self.canvas.itemconfig(self.city_text, text=self.searchbox.get())
         self.window.update()
 
     def clock_thread(self):
