@@ -436,13 +436,17 @@ class Weather:
             self.humidity_daily[i]['text'] = "humidity : " + str(self.datas['daily'][i]['humidity']) + " %"
             self.wind_speed_daily[i]['text'] = "wind speed : " + str(self.datas['daily'][i]['wind_speed']) + " m/s"
             self.images.append(PhotoImage(file=f"Icons\\{self.datas['daily'][i]['weather'][0]['icon']}@2x.png", name=f"icon_daily_{i}"))
+        self.dt_daily[0]['text'] = "Today"
+        for i in range(8):
             a = Canvas(self.frames_daily[i], width=100, height=100, name=f"daily_canvas_{i}")
             a.create_image(50, 50, image=self.icon_images_daily[i])
             a.config(bg=NAVY_BLUE, highlightthickness=0)
             self.canvases_daily.append(a)
-        self.dt_daily[0]['text'] = "Today"
         for i in range(8):
             self.canvases_daily[i].grid(column=0, row=0)
+
+        if len(self.searchbox.get()) != 0:
+            self.canvas.itemconfig(self.city_text, text=self.searchbox.get())
         self.window.update()
 
     def clock_thread(self):
@@ -455,8 +459,7 @@ class Weather:
         import time
         while True:
             time.sleep(1)
-            num = self.dt.find("2022") + 5
-            self.dt = self.dt[0:num] + datetime.datetime.now().strftime("%I:%M:%S")
+            self.dt = datetime.datetime.fromtimestamp(time.mktime((datetime.datetime.strptime(self.dt, "%A, %B %d, %Y %I:%M:%S") + datetime.timedelta(seconds=1)).timetuple())).strftime("%A, %B %d, %Y %I:%M:%S")
             self.canvas.itemconfig(self.date_text, text=self.dt)
             self.window.update()
 
