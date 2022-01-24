@@ -6,7 +6,9 @@ from tkinter import ttk
 # from PIL import ImageTk, Image
 
 ENDPOINT = "https://api.openweathermap.org/data/2.5/onecall"
+GEOCODING_ENDPOINT = "https://api.opencagedata.com/geocode/v1/json"
 KEY = "58cd189feef4d9f808fc5630caf130a1"
+GEOCODING_KEY = "449dd4d767d649c597f3c386ed460fc2"
 
 # Fonts
 MONTERY = ("MontereyFLF", "15", "normal")
@@ -206,6 +208,22 @@ class Weather:
         self.daily_text = Label(text="Daily", font=("nk57-monospace", "35", "bold"),
                                     fg="white", bg=NAVY_BLUE, highlightthickness=0)
 
+        # Entry
+        self.searchbox = Entry(width=20)
+        self.searchbox.config(highlightbackground=BLUE)
+        self.searchbox.insert(0, "Search")
+        self.searchbox['state'] = "disable"
+        self.searchbox.bind("<Button-1>", self.enable)
+        self.searchbox.bind("<KeyRelease>", self.disable)
+        self.searchbox.bind("<Return>", self.search_city)
+
+        # Button_label
+        self.search_img = PhotoImage(file="Icons\\search.png")
+        self.search_lbl = Label(image=self.search_img, bg=NAVY_BLUE, highlightthickness=0)
+
+        self.canvas.create_window(1400, 50, window=self.searchbox)
+        self.canvas.create_window(1327, 50, window=self.search_lbl)
+
         # Giving position to widgets
         for i in range(48):
             self.canvases[i].grid(column=0, row=0, sticky="w")
@@ -326,6 +344,29 @@ class Weather:
 
         self.window.mainloop()
 
+    def search_city(self, event):
+        response = requests.get(GEOCODING_ENDPOINT, params={'q': self.searchbox.get(), 'key': GEOCODING_KEY})
+        response.raise_for_status()
+        ans: dict = response.json()
+        lat = ans['results'][0]['geometry']['lat']
+        lon = ans['results'][0]['geometry']['lng']
+        self.weather['lat'] = lat
+        self.weather['lon'] = lon
+        self.city = self.searchbox.get()
+        self.update_thread()
+        self.searchbox.delete(0, END)
+        self.searchbox.insert(0, "Search")
+        self.searchbox['state'] = "disable"
+
+    def enable(self, event):
+        self.searchbox['state'] = "normal"
+        self.searchbox.delete(0, END)
+
+    def disable(self, event):
+        if len(self.searchbox.get()) == 0:
+            self.searchbox.insert(0, "Search")
+            self.searchbox['state'] = "disable"
+
     def update_thread(self, event):
         import threading
         t = threading.Thread(target=self.update)
@@ -376,6 +417,32 @@ class Weather:
         sunset = datetime.datetime.fromtimestamp(self.datas['current']['sunset']).strftime("%I:%M:%S")
         self.canvas.itemconfig(self.sun_rise_set_text, text=f"sunrise : {sunrise} AM / sunset : {sunset} PM")
 
+        # Update Daily informations
+        self.icon_images_daily.clear()
+        for i in range(8):
+            self.canvases_daily[i].grid_forget()
+        self.canvases_daily.clear()
+        for i in range(8):
+            self.dt_daily[i]['text'] = datetime.datetime.fromtimestamp(self.datas['daily'][i]['dt']).strftime("%A")
+            self.sunrise_daily[i]['text'] = datetime.datetime.fromtimestamp(self.datas['daily'][i]['sunrise']).strftime("%I:%M:%S")
+            self.sunset_daily[i]['text'] = datetime.datetime.fromtimestamp(self.datas['daily'][i]['sunset']).strftime("%I:%M:%S")
+            self.moonrise_daily[i]['text'] = datetime.datetime.fromtimestamp(self.datas['daily'][i]['moonrise']).strftime("%I:%M:%S")
+            self.moonset_daily[i]['text'] = datetime.datetime.fromtimestamp(self.datas['daily'][i]['moonset']).strftime("%I:%M:%S")
+            self.temp_daily[i]['text'] = "min : " + str(self.datas['daily'][i]['temp']['min'] - 273)[0:5] + "/ max : " + str(self.datas['daily'][i]['temp']['max'] - 273)[0:5]
+            self.main_daily[i]['text'] = self.datas['daily'][i]['weather'][0]['main']
+            self.description_daily[i]['text'] = self.datas['daily'][i]['weather'][0]['description']
+            self.clouds_daily[i]['text'] = "Clouds : " + str(self.datas['daily'][i]['clouds']) + " %"
+            self.uvi_daily[i]['text'] = "UVI : " + str(self.datas['daily'][i]['uvi']) + " index"
+            self.humidity_daily[i]['text'] = "humidity : " + str(self.datas['daily'][i]['humidity']) + " %"
+            self.wind_speed_daily[i]['text'] = "wind speed : " + str(self.datas['daily'][i]['wind_speed']) + " m/s"
+            self.images.append(PhotoImage(file=f"Icons\\{self.datas['daily'][i]['weather'][0]['icon']}@2x.png", name=f"icon_daily_{i}"))
+            a = Canvas(self.frames_daily[i], width=100, height=100, name=f"daily_canvas_{i}")
+            a.create_image(50, 50, image=self.icon_images_daily[i])
+            a.config(bg=NAVY_BLUE, highlightthickness=0)
+            self.canvases_daily.append(a)
+        self.dt_daily[0]['text'] = "Today"
+        for i in range(8):
+            self.canvases_daily[i].grid(column=0, row=0)
         self.window.update()
 
     def clock_thread(self):
