@@ -16,6 +16,7 @@ MONTERY = ("MontereyFLF", "15", "normal")
 NOVA = ("NovaMono", "20", "normal")
 MONOFONT = ("MONOFONT", "25", "bold")
 MONOFONT_NK57 = ("nk57-monospace", "14", "normal")
+VONIQUE = ("Vonique 64", "40", "bold")
 
 # Colors
 NAVY_BLUE = "#1A374D"
@@ -98,33 +99,67 @@ class Weather:
         humidity = self.datas['current']['humidity']
         self.dt = datetime.datetime.fromtimestamp(self.datas['current']['dt']).strftime("%A, %B %d, %Y  %I:%M:%S")
 
-        self.canvas_icon.grid(column=0, row=0, sticky='w')
+        self.canvas_icon.grid(column=1, row=0, sticky='w')
         # Labels
         # Main labels
         self.label_main = Label(self.frame_today_info, text=text, font=("nk57-monospace", "13", "normal"),
                                 fg="white", bg=NAVY_BLUE, highlightthickness=0)
-        self.label_main.grid(column=0, row=1, sticky='w')
+        self.label_main.grid(column=1, row=1, sticky='w')
+        self.label_description = Label(self.frame_today_info, text=text_description,
+                                       font=("nk57-monospace", "13", "normal"),
+                                       fg="white", bg=NAVY_BLUE, highlightthickness=0)
+        self.label_description.grid(column=1, row=2, sticky='w')
         self.label_temp = Label(self.frame_today_info,
                                 text="Temp : " + str(temp)[0:5] + "  feels like " + str(temp_feel)[0:5],
                                 font=("nk57-monospace", "13", "normal"),
                                 fg="white", bg=NAVY_BLUE, highlightthickness=0)
-        self.label_temp.grid(column=0, row=2, sticky='w')
-        self.label_description = Label(self.frame_today_info, text=text_description,
-                                       font=("nk57-monospace", "13", "normal"),
-                                       fg="white", bg=NAVY_BLUE, highlightthickness=0)
-        self.label_description.grid(column=0, row=3, sticky='w')
+        self.label_temp.grid(column=1, row=3, sticky='w')
         self.label_humidity = Label(self.frame_today_info, text="Humidity : " + str(humidity) + " %",
                                     font=("nk57-monospace", "13", "normal"),
                                     fg="white", bg=NAVY_BLUE, highlightthickness=0)
-        self.label_humidity.grid(column=0, row=4, sticky='w')
+        self.label_humidity.grid(column=1, row=4, sticky='w')
         self.label_wind_speed = Label(self.frame_today_info, text="Wind Speed : " + str(wind_speed) + " m/s",
                                       font=("nk57-monospace", "13", "normal"),
                                       fg="white", bg=NAVY_BLUE, highlightthickness=0)
-        self.label_wind_speed.grid(column=0, row=5, sticky='w')
+        self.label_wind_speed.grid(column=1, row=5, sticky='w')
         self.label_uvi = Label(self.frame_today_info, text="UVI : " + str(uvi) + " index",
                                font=("nk57-monospace", "13", "normal"),
                                fg="white", bg=NAVY_BLUE, highlightthickness=0)
-        self.label_uvi.grid(column=0, row=6, sticky='w')
+        self.label_uvi.grid(column=1, row=6, sticky='w')
+        self.canvas_main_icon = Canvas(self.frame_today_info, width=30, height=30)
+        self.canvas_des_icon = Canvas(self.frame_today_info, width=30, height=30)
+        self.canvas_wind_icon = Canvas(self.frame_today_info, width=30, height=30)
+        self.canvas_humidity_icon = Canvas(self.frame_today_info, width=30, height=30)
+        self.canvas_uvi_icon = Canvas(self.frame_today_info, width=30, height=30)
+        self.canvas_sun_icon = Canvas(self.frame_today_info, width=30, height=30)
+        self.canvas_temp_icon = Canvas(self.frame_today_info, width=30, height=30)
+        self.canvas_main_icon.grid(column=0, row=1 , sticky="w")
+        self.canvas_des_icon.grid(column=0, row=2, sticky="w")
+        self.canvas_temp_icon.grid(column=0, row=3, sticky="w")
+        self.canvas_humidity_icon.grid(column=0, row=4, sticky="w")
+        self.canvas_wind_icon.grid(column=0, row=5, sticky="w")
+        self.canvas_uvi_icon.grid(column=0, row=6, sticky="w")
+        self.canvas_main_icon.config(bg=NAVY_BLUE, highlightthickness=0)
+        self.canvas_des_icon.config(bg=NAVY_BLUE, highlightthickness=0)
+        self.canvas_temp_icon.config(bg=NAVY_BLUE, highlightthickness=0)
+        self.canvas_uvi_icon.config(bg=NAVY_BLUE, highlightthickness=0)
+        self.canvas_humidity_icon.config(bg=NAVY_BLUE, highlightthickness=0)
+        self.canvas_sun_icon.config(bg=NAVY_BLUE, highlightthickness=0)
+        self.canvas_wind_icon.config(bg=NAVY_BLUE, highlightthickness=0)
+        self.img_main_icon = PhotoImage(file="Icons\\main.png")
+        self.img_moon_icon = PhotoImage(file="Icons\\moon3.png")
+        self.img_uvi_icon = PhotoImage(file="Icons\\uvi.png")
+        self.img_clouds_icon = PhotoImage(file="Icons\\cloud.png")
+        self.img_wind_icon = PhotoImage(file="Icons\\wind_speed2.png")
+        self.img_humidity_icon = PhotoImage(file="Icons\\humidity.png")
+        self.img_temp_icon = PhotoImage(file="Icons\\temp2.png")
+        self.canvas_main_icon.create_image(15, 15, image=self.img_main_icon)
+        self.canvas_des_icon.create_image(15, 15, image=self.img_main_icon)
+        self.canvas_temp_icon.create_image(15, 15, image=self.img_temp_icon)
+        self.canvas_wind_icon.create_image(15, 15, image=self.img_wind_icon)
+        self.canvas_uvi_icon.create_image(15, 15, image=self.img_uvi_icon)
+        self.canvas_humidity_icon.create_image(15, 15, image=self.img_humidity_icon)
+
 
         self.frame_today_info.grid(column=0, row=1, sticky="w", padx=40, pady=20, columnspan=3, rowspan=2)
 
@@ -224,8 +259,9 @@ class Weather:
         self.search_lbl = Label(image=self.search_img, bg=NAVY_BLUE, highlightthickness=0)
         self.search_lbl.bind("<Button-1>", self.search_city)
 
-        self.canvas.create_window(1400, 50, window=self.searchbox)
-        self.canvas.create_window(1327, 50, window=self.search_lbl)
+        self.canvas.create_window(1300, 175, window=self.searchbox, anchor="nw")
+        self.canvas.create_window(1280, 175, window=self.search_lbl, anchor="nw")
+        self.canvas.create_text(650, 40, text="Weather", anchor="nw", fill="#007ba7", font=VONIQUE)
 
         # Giving position to widgets
         for i in range(48):
