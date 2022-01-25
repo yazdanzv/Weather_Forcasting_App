@@ -673,7 +673,11 @@ class Weather:
 
     def back_clicked(self, event):
         # Forgetting
-        for i in range(8):
+        for i in range(4):
+            self.frames_daily[i].grid_forget()
+        self.next_lbl_daily.grid_forget()
+        self.previous_lbl_daily.grid_forget()
+        for i in range(4, 8):
             self.frames_daily[i].grid_forget()
         self.daily_text.grid_forget()
         self.back_label.grid_forget()
