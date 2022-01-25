@@ -8,8 +8,8 @@ from tkinter import ttk
 
 ENDPOINT = "https://api.openweathermap.org/data/2.5/onecall"
 GEOCODING_ENDPOINT = "https://api.opencagedata.com/geocode/v1/json"
-KEY = "58cd189feef4d9f808fc5630caf130a1"
-GEOCODING_KEY = "449dd4d767d649c597f3c386ed460fc2"
+KEY = "YOUR KEY"
+GEOCODING_KEY = "YOUR KEY"
 
 # Fonts
 MONTERY = ("MontereyFLF", "15", "normal")
