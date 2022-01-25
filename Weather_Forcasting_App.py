@@ -133,7 +133,7 @@ class Weather:
         self.canvas_uvi_icon = Canvas(self.frame_today_info, width=30, height=30)
         self.canvas_sun_icon = Canvas(self.frame_today_info, width=30, height=30)
         self.canvas_temp_icon = Canvas(self.frame_today_info, width=30, height=30)
-        self.canvas_main_icon.grid(column=0, row=1 , sticky="w")
+        self.canvas_main_icon.grid(column=0, row=1, sticky="w")
         self.canvas_des_icon.grid(column=0, row=2, sticky="w")
         self.canvas_temp_icon.grid(column=0, row=3, sticky="w")
         self.canvas_humidity_icon.grid(column=0, row=4, sticky="w")
@@ -148,18 +148,21 @@ class Weather:
         self.canvas_wind_icon.config(bg=NAVY_BLUE, highlightthickness=0)
         self.img_main_icon = PhotoImage(file="Icons\\main.png")
         self.img_moon_icon = PhotoImage(file="Icons\\moon3.png")
+        self.img_sun_icon = PhotoImage(file="Icons\\sun.png")
+        self.img_time_icon = PhotoImage(file="Icons\\time.png")
+        self.img_cloud_icon = PhotoImage(file="Icons\\cloud.png")
+        self.img_moon_icon = PhotoImage(file="Icons\\moon3.png")
         self.img_uvi_icon = PhotoImage(file="Icons\\uvi.png")
-        self.img_clouds_icon = PhotoImage(file="Icons\\cloud.png")
         self.img_wind_icon = PhotoImage(file="Icons\\wind_speed2.png")
         self.img_humidity_icon = PhotoImage(file="Icons\\humidity.png")
         self.img_temp_icon = PhotoImage(file="Icons\\temp2.png")
+        self.img_calender_icon = PhotoImage(file="Icons\\calender.png")
         self.canvas_main_icon.create_image(15, 15, image=self.img_main_icon)
         self.canvas_des_icon.create_image(15, 15, image=self.img_main_icon)
         self.canvas_temp_icon.create_image(15, 15, image=self.img_temp_icon)
         self.canvas_wind_icon.create_image(15, 15, image=self.img_wind_icon)
         self.canvas_uvi_icon.create_image(15, 15, image=self.img_uvi_icon)
         self.canvas_humidity_icon.create_image(15, 15, image=self.img_humidity_icon)
-
 
         self.frame_today_info.grid(column=0, row=1, sticky="w", padx=40, pady=20, columnspan=3, rowspan=2)
 
@@ -204,7 +207,7 @@ class Weather:
         self.sun_rise_set_text = self.canvas.create_text(45, 220,
                                                          text=f"sunrise : {sunrise} AM / sunset : {sunset} PM",
                                                          font=MONOFONT_NK57,
-                                                         fill="white" , anchor="nw")
+                                                         fill="white", anchor="nw")
         self.date_text = self.canvas.create_text(45, 180, text=self.dt, font=MONOFONT_NK57, fill="white", anchor="nw")
 
         # Button Labels
@@ -216,7 +219,8 @@ class Weather:
                                fg="white", bg=NAVY_BLUE, highlightthickness=0)
         self.daily_page = self.canvas.create_text(70, 30, text="Daily", font=("nk57-monospace", "10", "normal"),
                                                   fill="white")
-        self.home_page_canvas = self.canvas.create_text(210, 30, text="Refresh", font=("nk57-monospace", "10", "normal"),
+        self.home_page_canvas = self.canvas.create_text(210, 30, text="Refresh",
+                                                        font=("nk57-monospace", "10", "normal"),
                                                         fill="white")
         self.hourly_page = self.canvas.create_text(140, 30, text="Hourly", font=("nk57-monospace", "10", "normal"),
                                                    fill="white")
@@ -231,7 +235,7 @@ class Weather:
         self.previous_label = Label(self.label_button_frame, text="Previous", font=("nk57-monospace", "15", "normal"),
                                     fg="white", bg=NAVY_BLUE, highlightthickness=0)
         self.back_label = Label(text="Back", font=("nk57-monospace", "15", "normal"),
-                                    fg="white", bg=NAVY_BLUE, highlightthickness=0)
+                                fg="white", bg=NAVY_BLUE, highlightthickness=0)
         self.home_label.bind("<Button-1>", self.home_clicked)
         self.next_label.bind("<Button-1>", self.next_clicked)
         self.previous_label.bind("<Button-1>", self.previous_clicked)
@@ -243,7 +247,7 @@ class Weather:
         self.tomorrow_label = Label(text="Tomorrow", font=("nk57-monospace", "20", "bold"),
                                     fg="white", bg=NAVY_BLUE, highlightthickness=0)
         self.daily_text = Label(text="Daily", font=("nk57-monospace", "35", "bold"),
-                                    fg="white", bg=NAVY_BLUE, highlightthickness=0)
+                                fg="white", bg=NAVY_BLUE, highlightthickness=0)
 
         # Entry
         self.searchbox = Entry(width=20)
@@ -323,12 +327,14 @@ class Weather:
             self.temp_daily.append(a)
         self.main_daily = []
         for i in range(8):
-            a = Label(self.frames_daily[i], text=self.datas['daily'][i]['weather'][0]['main'], font=("nk57-monospace", "11", "normal"),
+            a = Label(self.frames_daily[i], text=self.datas['daily'][i]['weather'][0]['main'],
+                      font=("nk57-monospace", "11", "normal"),
                       fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"main_daily_{i}")
             self.main_daily.append(a)
         self.description_daily = []
         for i in range(8):
-            a = Label(self.frames_daily[i], text=self.datas['daily'][i]['weather'][0]['description'], font=("nk57-monospace", "11", "normal"),
+            a = Label(self.frames_daily[i], text=self.datas['daily'][i]['weather'][0]['description'],
+                      font=("nk57-monospace", "11", "normal"),
                       fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"description_daily_{i}")
             self.description_daily.append(a)
         self.icon_images_daily = []
@@ -343,12 +349,14 @@ class Weather:
             self.canvases_daily.append(a)
         self.clouds_daily = []
         for i in range(8):
-            a = Label(self.frames_daily[i], text="Clouds : " + str(self.datas['daily'][i]['clouds']) + " %", font=("nk57-monospace", "11", "normal"),
+            a = Label(self.frames_daily[i], text="Clouds : " + str(self.datas['daily'][i]['clouds']) + " %",
+                      font=("nk57-monospace", "11", "normal"),
                       fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"clouds_daily_{i}")
             self.clouds_daily.append(a)
         self.uvi_daily = []
         for i in range(8):
-            a = Label(self.frames_daily[i], text="UVI : " + str(self.datas['daily'][i]['uvi']) + " index", font=("nk57-monospace", "11", "normal"),
+            a = Label(self.frames_daily[i], text="UVI : " + str(self.datas['daily'][i]['uvi']) + " index",
+                      font=("nk57-monospace", "11", "normal"),
                       fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"uvi_daily_{i}")
             self.uvi_daily.append(a)
         self.humidity_daily = []
@@ -363,25 +371,155 @@ class Weather:
                       font=("nk57-monospace", "11", "normal"),
                       fg="white", bg=NAVY_BLUE, highlightthickness=0, name=f"wind_speed_daily_{i}")
             self.wind_speed_daily.append(a)
+        self.canvas_dt_daily = []
+        for i in range(8):
+            a = Canvas(self.frames_daily[i], width=30, height=30, name=f"canvas_dt_{i}")
+            a.config(highlightthickness=0, bg=NAVY_BLUE)
+            a.create_image(15, 15, image=self.img_calender_icon)
+            self.canvas_dt_daily.append(a)
+        self.canvas_main_daily = []
+        for i in range(8):
+            a = Canvas(self.frames_daily[i], width=30, height=30, name=f"canvas_main_{i}")
+            a.config(highlightthickness=0, bg=NAVY_BLUE)
+            a.create_image(15, 15, image=self.img_main_icon)
+            self.canvas_main_daily.append(a)
+        self.canvas_des_daily = []
+        for i in range(8):
+            a = Canvas(self.frames_daily[i], width=30, height=30, name=f"canvas_description_{i}")
+            a.config(highlightthickness=0, bg=NAVY_BLUE)
+            a.create_image(15, 15, image=self.img_main_icon)
+            self.canvas_des_daily.append(a)
+        self.canvas_sunrise_daily = []
+        for i in range(8):
+            a = Canvas(self.frames_daily[i], width=30, height=30, name=f"canvas_sunrise_{i}")
+            a.config(highlightthickness=0, bg=NAVY_BLUE)
+            a.create_image(15, 15, image=self.img_sun_icon)
+            self.canvas_sunrise_daily.append(a)
+        self.canvas_sunset_daily = []
+        for i in range(8):
+            a = Canvas(self.frames_daily[i], width=30, height=30, name=f"canvas_sunset_{i}")
+            a.config(highlightthickness=0, bg=NAVY_BLUE)
+            a.create_image(15, 15, image=self.img_sun_icon)
+            self.canvas_sunset_daily.append(a)
+        self.canvas_moonrise_daily = []
+        for i in range(8):
+            a = Canvas(self.frames_daily[i], width=30, height=30, name=f"canvas_moonrise_{i}")
+            a.config(highlightthickness=0, bg=NAVY_BLUE)
+            a.create_image(15, 15, image=self.img_moon_icon)
+            self.canvas_moonrise_daily.append(a)
+        self.canvas_moonset_daily = []
+        for i in range(8):
+            a = Canvas(self.frames_daily[i], width=30, height=30, name=f"canvas_moonset_{i}")
+            a.config(highlightthickness=0, bg=NAVY_BLUE)
+            a.create_image(15, 15, image=self.img_moon_icon)
+            self.canvas_moonset_daily.append(a)
+        self.canvas_clouds_daily = []
+        for i in range(8):
+            a = Canvas(self.frames_daily[i], width=30, height=30, name=f"canvas_clouds_{i}")
+            a.config(highlightthickness=0, bg=NAVY_BLUE)
+            a.create_image(15, 15, image=self.img_cloud_icon)
+            self.canvas_clouds_daily.append(a)
+        self.canvas_uvi_daily = []
+        for i in range(8):
+            a = Canvas(self.frames_daily[i], width=30, height=30, name=f"canvas_uvi_{i}")
+            a.config(highlightthickness=0, bg=NAVY_BLUE)
+            a.create_image(15, 15, image=self.img_uvi_icon)
+            self.canvas_uvi_daily.append(a)
+        self.canvas_wind_daily = []
+        for i in range(8):
+            a = Canvas(self.frames_daily[i], width=30, height=30, name=f"canvas_wind_{i}")
+            a.config(highlightthickness=0, bg=NAVY_BLUE)
+            a.create_image(15, 15, image=self.img_wind_icon)
+            self.canvas_wind_daily.append(a)
+        self.canvas_humidity_daily = []
+        for i in range(8):
+            a = Canvas(self.frames_daily[i], width=30, height=30, name=f"canvas_humidity_{i}")
+            a.config(highlightthickness=0, bg=NAVY_BLUE)
+            a.create_image(15, 15, image=self.img_humidity_icon)
+            self.canvas_humidity_daily.append(a)
+        self.canvas_temp_daily = []
+        for i in range(8):
+            a = Canvas(self.frames_daily[i], width=30, height=30, name=f"canvas_temp_{i}")
+            a.config(highlightthickness=0, bg=NAVY_BLUE)
+            a.create_image(15, 15, image=self.img_temp_icon)
+            self.canvas_temp_daily.append(a)
         # Giving position to daily widgets
         for i in range(8):
-            self.canvases_daily[i].grid(column=0, row=0)
-            self.dt_daily[i].grid(column=0, row=1, sticky="w")
-            self.main_daily[i].grid(column=0, row=2, sticky="w")
-            self.description_daily[i].grid(column=0, row=3, sticky="w")
-            self.temp_daily[i].grid(column=0, row=4, sticky="w")
-            self.sunrise_daily[i].grid(column=0, row=5, sticky="w")
-            self.sunset_daily[i].grid(column=0, row=6, sticky="w")
-            self.moonrise_daily[i].grid(column=0, row=7, sticky="w")
-            self.moonset_daily[i].grid(column=0, row=8, sticky="w")
-            self.clouds_daily[i].grid(column=0, row=9, sticky="w")
-            self.uvi_daily[i].grid(column=0, row=10, sticky="w")
-            self.humidity_daily[i].grid(column=0, row=11, sticky="w")
-            self.wind_speed_daily[i].grid(column=0, row=12, sticky="w")
+            self.canvases_daily[i].grid(column=0, row=0, columnspan=2)
+            self.dt_daily[i].grid(column=1, row=1, sticky="w")
+            self.canvas_dt_daily[i].grid(column=0, row=1, sticky="w")
+            self.main_daily[i].grid(column=1, row=2, sticky="w")
+            self.canvas_main_daily[i].grid(column=0, row=2, sticky="w")
+            self.description_daily[i].grid(column=1, row=3, sticky="w")
+            self.canvas_des_daily[i].grid(column=0, row=3, sticky="w")
+            self.temp_daily[i].grid(column=1, row=4, sticky="w")
+            self.canvas_temp_daily[i].grid(column=0, row=4, sticky="w")
+            self.sunrise_daily[i].grid(column=1, row=5, sticky="w")
+            self.canvas_sunrise_daily[i].grid(column=0, row=5, sticky="w")
+            self.sunset_daily[i].grid(column=1, row=6, sticky="w")
+            self.canvas_sunset_daily[i].grid(column=0, row=6, sticky="w")
+            self.moonrise_daily[i].grid(column=1, row=7, sticky="w")
+            self.canvas_moonrise_daily[i].grid(column=0, row=7, sticky="w")
+            self.moonset_daily[i].grid(column=1, row=8, sticky="w")
+            self.canvas_moonset_daily[i].grid(column=0, row=8, sticky="w")
+            self.clouds_daily[i].grid(column=1, row=9, sticky="w")
+            self.canvas_clouds_daily[i].grid(column=0, row=9, sticky="w")
+            self.uvi_daily[i].grid(column=1, row=10, sticky="w")
+            self.canvas_uvi_daily[i].grid(column=0, row=10, sticky="w")
+            self.humidity_daily[i].grid(column=1, row=11, sticky="w")
+            self.canvas_humidity_daily[i].grid(column=0, row=11, sticky="w")
+            self.wind_speed_daily[i].grid(column=1, row=12, sticky="w")
+            self.canvas_wind_daily[i].grid(column=0, row=12, sticky="w")
+
+        # Labels for daily page
+        self.next_lbl_daily = Label(text="Next",
+                                    font=("nk57-monospace", "15", "normal"),
+                                    fg="white", bg=NAVY_BLUE, highlightthickness=0)
+        self.next_lbl_daily.bind("<Button-1>", self.next_daily)
+        self.previous_lbl_daily = Label(text="Previous",
+                                        font=("nk57-monospace", "15", "normal"),
+                                        fg="white", bg=NAVY_BLUE, highlightthickness=0)
+        self.previous_lbl_daily.bind("<Button-1>", self.previous_daily)
 
         self.clock_thread()
 
         self.window.mainloop()
+
+    def next_daily(self, event):
+        # Forgetting
+        for i in range(4):
+            self.frames_daily[i].grid_forget()
+        self.next_lbl_daily.grid_forget()
+        # Setting
+        # Giving position to frames
+        for i in range(4, 8):
+            self.frames_daily[i].grid(column=i - 4, row=1, padx=80, pady=60)
+        self.previous_lbl_daily.grid(column=3, row=2, padx=20, pady=15)
+
+    def previous_daily(self, event):
+        # Forgetting
+        for i in range(4, 8):
+            self.frames_daily[i].grid_forget()
+        self.previous_lbl_daily.grid_forget()
+        # Setting
+        self.next_lbl_daily.grid(column=3, row=2, padx=20, pady=15)
+        for i in range(4):
+            self.frames_daily[i].grid(column=i, row=1, padx=80, pady=60)
+
+    def daily_clicked(self, event):
+        # Forgetting
+        self.canvas.grid_forget()
+        self.frame_today_info.grid_forget()
+        for i in range(12):
+            self.frames_hourly[i].grid_forget()
+        self.more.grid_forget()
+        # Setting
+        # Giving position to frames
+        for i in range(4):
+            self.frames_daily[i].grid(column=i, row=1, padx=80, pady=60)
+        self.daily_text.grid(column=1, row=0, padx=20, pady=15, columnspan=2)
+        self.back_label.grid(column=0, row=2, padx=20, pady=15)
+        self.next_lbl_daily.grid(column=3, row=2, padx=20, pady=15)
 
     def search_city(self, event):
         response = requests.get(GEOCODING_ENDPOINT, params={'q': self.searchbox.get(), 'key': GEOCODING_KEY})
@@ -465,18 +603,26 @@ class Weather:
         self.canvases_daily.clear()
         for i in range(8):
             self.dt_daily[i]['text'] = datetime.datetime.fromtimestamp(self.datas['daily'][i]['dt']).strftime("%A")
-            self.sunrise_daily[i]['text'] = "sunrise : " + str(datetime.datetime.fromtimestamp(self.datas['daily'][i]['sunrise']).strftime("%I:%M:%S"))
-            self.sunset_daily[i]['text'] = "sunset : " + str(datetime.datetime.fromtimestamp(self.datas['daily'][i]['sunset']).strftime("%I:%M:%S"))
-            self.moonrise_daily[i]['text'] = "moonrise : " + str(datetime.datetime.fromtimestamp(self.datas['daily'][i]['moonrise']).strftime("%I:%M:%S"))
-            self.moonset_daily[i]['text'] = "moonset : " + str(datetime.datetime.fromtimestamp(self.datas['daily'][i]['moonset']).strftime("%I:%M:%S"))
-            self.temp_daily[i]['text'] = "min : " + str(self.datas['daily'][i]['temp']['min'] - 273)[0:5] + "/ max : " + str(self.datas['daily'][i]['temp']['max'] - 273)[0:5]
+            self.sunrise_daily[i]['text'] = "sunrise : " + str(
+                datetime.datetime.fromtimestamp(self.datas['daily'][i]['sunrise']).strftime("%I:%M:%S"))
+            self.sunset_daily[i]['text'] = "sunset : " + str(
+                datetime.datetime.fromtimestamp(self.datas['daily'][i]['sunset']).strftime("%I:%M:%S"))
+            self.moonrise_daily[i]['text'] = "moonrise : " + str(
+                datetime.datetime.fromtimestamp(self.datas['daily'][i]['moonrise']).strftime("%I:%M:%S"))
+            self.moonset_daily[i]['text'] = "moonset : " + str(
+                datetime.datetime.fromtimestamp(self.datas['daily'][i]['moonset']).strftime("%I:%M:%S"))
+            self.temp_daily[i]['text'] = "min : " + str(self.datas['daily'][i]['temp']['min'] - 273)[
+                                                    0:5] + "/ max : " + str(
+                self.datas['daily'][i]['temp']['max'] - 273)[0:5]
             self.main_daily[i]['text'] = self.datas['daily'][i]['weather'][0]['main']
             self.description_daily[i]['text'] = self.datas['daily'][i]['weather'][0]['description']
             self.clouds_daily[i]['text'] = "Clouds : " + str(self.datas['daily'][i]['clouds']) + " %"
             self.uvi_daily[i]['text'] = "UVI : " + str(self.datas['daily'][i]['uvi']) + " index"
             self.humidity_daily[i]['text'] = "humidity : " + str(self.datas['daily'][i]['humidity']) + " %"
             self.wind_speed_daily[i]['text'] = "wind speed : " + str(self.datas['daily'][i]['wind_speed']) + " m/s"
-            self.icon_images_daily.append(PhotoImage(file=f"Icons\\{self.datas['daily'][i]['weather'][0]['icon']}@2x.png", name=f"icon_daily_{i}"))
+            self.icon_images_daily.append(
+                PhotoImage(file=f"Icons\\{self.datas['daily'][i]['weather'][0]['icon']}@2x.png",
+                           name=f"icon_daily_{i}"))
         self.dt_daily[0]['text'] = "Today"
         for i in range(8):
             a = Canvas(self.frames_daily[i], width=100, height=100, name=f"daily_canvas_{i}")
@@ -498,7 +644,9 @@ class Weather:
         import time
         while True:
             time.sleep(1)
-            self.dt = datetime.datetime.fromtimestamp(time.mktime((datetime.datetime.strptime(self.dt, "%A, %B %d, %Y %I:%M:%S") + datetime.timedelta(seconds=1)).timetuple())).strftime("%A, %B %d, %Y %I:%M:%S")
+            self.dt = datetime.datetime.fromtimestamp(time.mktime((datetime.datetime.strptime(self.dt,
+                                                                                              "%A, %B %d, %Y %I:%M:%S") + datetime.timedelta(
+                seconds=1)).timetuple())).strftime("%A, %B %d, %Y %I:%M:%S")
             self.canvas.itemconfig(self.date_text, text=self.dt)
             self.window.update()
 
@@ -522,20 +670,6 @@ class Weather:
         self.home_label.grid(column=0, row=0, pady=10, sticky="w")
         self.next_label.grid(column=0, row=1, pady=10, sticky="w")
         self.label_button_frame.grid(column=0, row=3, padx=100)
-
-    def daily_clicked(self, event):
-        # Forgetting
-        self.canvas.grid_forget()
-        self.frame_today_info.grid_forget()
-        for i in range(12):
-            self.frames_hourly[i].grid_forget()
-        self.more.grid_forget()
-        # Setting
-        # Giving position to frames
-        for i in range(8):
-            self.frames_daily[i].grid(column=i, row=1, padx=10, pady=100)
-        self.daily_text.grid(column=3, row=0, padx=20, pady=15, columnspan=2)
-        self.back_label.grid(column=0, row=2, padx=20, pady=60)
 
     def back_clicked(self, event):
         # Forgetting
